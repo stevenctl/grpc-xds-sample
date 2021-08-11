@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: greeter
+spec:
+  selector:
+    app: greeter
+  ports:
+  - port: 7070
+    name: grpc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter
+  labels:
+    app: greeter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: greeter
+  template:
+    metadata:
+      labels:
+        app: greeter
+      annotations:
+        inject.istio.io/templates: grpc-agent
+        proxy.istio.io/config: '{"holdApplicationUntilProxyStarts": true}'
+    spec:
+      containers:
+      - name: app
+        image: slandow/grpc-xds-sample
+        ports:
+        - containerPort: 7070
+        env:
+        - name: SERVICE_NAME
+          value: greeter
+        - name: SERVICE_PORT
+          value: "7070"
+        - name: SERVICE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace

@@ -11,6 +11,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	creds "google.golang.org/grpc/credentials/xds"
+	// even if you're not using anything from this import, it should still be included to get the side-effect
+	// of installing xDS balancers and resolvers (enabling xds:/// URLs in grpc.Dial)
 	"google.golang.org/grpc/xds"
 
 	"github.com/stevenctl/grpc-xds-sample/greeter"
